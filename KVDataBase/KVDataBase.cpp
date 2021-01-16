@@ -2,6 +2,10 @@
 
 Database:: Database() {}
 
+Database::Database(string path) {
+	this->dots = path;
+}
+
 void Database::eraseSubStr(std::string& mainStr, const std::string& toErase) {
 	size_t pos = mainStr.find(toErase);
 	if (pos != std::string::npos) {
@@ -202,4 +206,16 @@ vector<string> Database::getByKeys(string table_name, vector<string> keys) {
 
 void Database::updateByKeys(string table_name, vector<string> key, string value) {
 	updateByKey(table_name, concatKeys(key), value);
+}
+
+vector<vector<string>> Database::getAllKeys(string table_name) {
+	string path = dots + doubleslash + table_name;
+	string erase_string = path + doubleslash;
+	vector<vector<string>> all_keys;
+ 	for (auto& p : fs::directory_iterator(path)) {
+		vector<string> keys = split(p.path().u8string().c_str());
+		eraseSubStr(keys[0], erase_string);
+		all_keys.push_back(keys);
+	}
+	return all_keys;
 }

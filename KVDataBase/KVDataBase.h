@@ -14,6 +14,7 @@ class Database
 {
 public:
 	Database();
+	Database(string path);
 	bool createTableWithKeys(string table_name, vector<string> keys);
 	bool deleteTable(string table_name);
 	void addValueByKeys(string table_name, vector<string> keys, string value);
@@ -22,7 +23,7 @@ public:
 	string getSortedByKey(string table_name, string key, bool isFirst);
 	vector<string> getByKeys(string table_name, vector<string> keys);
 	void updateByKeys(string table_name, vector<string> key, string value);
-
+	vector<vector<string>> getAllKeys(string table_name);
 private:
 	string dots = "..";
 	string doubleslash = "\\";
@@ -30,6 +31,7 @@ private:
 	string metasymbol = ",";
 	char token = ',';
 
+	
 	void eraseSubStr(std::string& mainStr, const std::string& toErase);
 	bool createDirectory(string path);
 	bool createTable(string table_name);
