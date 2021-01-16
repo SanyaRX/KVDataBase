@@ -74,8 +74,6 @@ TEST(UpdateValue, UpdateValue) {
         output
     );
 
-    std::cout << output[0] << std::endl;
-
     ASSERT_STREQ("expected", output[0].c_str());
 }
 

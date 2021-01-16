@@ -6,14 +6,7 @@
 #define KVDB_API __declspec(dllimport)
 #endif
 
-#define CREATE_TABLE_METHOD_ID 1
-#define DELETE_TABLE_METHOD_ID 2
-#define ADD_VALUE_METHOD_ID 3
-#define DELETE_ALL_VALUES_BY_KEY_METHOD_ID 4
-#define DELETE_VALUE_BY_KEY_METHOD_ID 5
-#define GET_BY_KEY_METHOD_ID 6
-#define UPDATE_BY_KEY_METHOD_ID 7
-#define GET_SORTED_VALUE_METHOD_ID 8
+#include "KVDBUtils.h"
 
 #include <string>
 #include <vector>

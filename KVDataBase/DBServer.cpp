@@ -1,103 +1,11 @@
 #include "DBServer.h"
 
-const int max_client_buffer_size = 1024;
-
 DBServer::DBServer(int portNumber) {
 
 	this->port = portNumber;
 }
 
 
-int DBServer::receiveString(const SOCKET &clientSocket, std::string &output) {
-    
-    char buf[max_client_buffer_size];
-
-    int result = recv(clientSocket, buf, max_client_buffer_size, 0);
-
-    if (result == SOCKET_ERROR) {
-        cerr << "recv failed: " << result << "\n";
-
-        return 1;
-    }
-    else if (result == 0) {
-        cerr << "connection closed...\n";
-        return 2;
-    }
-    else if (result > 0) {
-        buf[result] = '\0';
-
-        output = std::string(buf);
-    }
-
-
-    return 0;
-}
-
-
-int DBServer::receiveVector(const SOCKET& clientSocket, std::vector<std::string>& output) {
-
-    int ok = 0;
-    send(clientSocket, (char*)&ok, sizeof(int), 0);
-
-    int vectorSize = 0;
-    recv(clientSocket, (char*)&vectorSize, sizeof(vectorSize), 0);
-    output = std::vector<std::string>();
-    std::cout << vectorSize << std::endl;
-    
-    int receiveResult = 0;
-    
-    std::string message;
-    for (int i = 0; i < vectorSize; i++) {
-        
-        send(clientSocket, (char*)&ok, sizeof(int), 0);
-
-        receiveResult = receiveString(clientSocket, message);
-        
-        output.push_back(message);
-    }
-
-    return 0;
-}
-
-int DBServer::sendInt(int value, const SOCKET& clientSocket) {
-
-    int sendResult = send(clientSocket, (char*)&value, sizeof(value), 0);
-    return sendResult;
-}
-
-int DBServer::sendString(std::string message, const SOCKET& clientSocket) {
-
-    int sendResult = send(clientSocket, message.c_str(), message.size() + 1, 0);
-    return sendResult;
-}
-
-
-int DBServer::sendVector(const std::vector<std::string>& vector, const SOCKET& clientSocket) {
-
-    int sendResult;
-    int recvResult = 0;
-
-    recv(clientSocket, (char*)&recvResult, sizeof(int), 0);
-    sendResult = sendInt(vector.size(), clientSocket);
-
-    if (sendResult <= 0) {
-        return -1;
-    }
-
-
-    for (std::string message : vector) {
-
-        recv(clientSocket, (char*)&recvResult, sizeof(int), 0);
-        sendString(message, clientSocket);
-
-        if (sendResult <= 0) {
-            return -1;
-        }
-    }
-
-
-    return 0;
-}
 
 
 int DBServer::handleRequest(const SOCKET &clientSocket) {
@@ -113,36 +21,36 @@ int DBServer::handleRequest(const SOCKET &clientSocket) {
 
     case CREATE_TABLE_METHOD_ID: {
         // create table
-        DBServer::receiveString(clientSocket, tableName);
-        DBServer::receiveVector(clientSocket, keys);
+        receiveString(clientSocket, tableName);
+        receiveVector(clientSocket, keys);
 
         this->database.createTableWithKeys(tableName, keys);
         break;
     }
     case DELETE_TABLE_METHOD_ID: {
-        DBServer::receiveString(clientSocket, tableName);
+        receiveString(clientSocket, tableName);
 
         this->database.deleteTable(tableName);
         break;
     }
     case ADD_VALUE_METHOD_ID: {
-        DBServer::receiveString(clientSocket, tableName);
-        DBServer::receiveVector(clientSocket, keys);
-        DBServer::receiveString(clientSocket, value);
+        receiveString(clientSocket, tableName);
+        receiveVector(clientSocket, keys);
+        receiveString(clientSocket, value);
         std::cout << value << std::endl;
         this->database.addValueByKeys(tableName, keys, value);
         break;
     }
     case DELETE_ALL_VALUES_BY_KEY_METHOD_ID: {
-        DBServer::receiveString(clientSocket, tableName);
-        DBServer::receiveVector(clientSocket, keys);
+        receiveString(clientSocket, tableName);
+        receiveVector(clientSocket, keys);
 
         this->database.deleteAllValuesByKeys(tableName, keys);
         break;
     }
     case GET_BY_KEY_METHOD_ID: {
-        DBServer::receiveString(clientSocket, tableName);
-        DBServer::receiveVector(clientSocket, keys);
+        receiveString(clientSocket, tableName);
+        receiveVector(clientSocket, keys);
 
         auto data = this->database.getByKeys(tableName, keys);
         sendVector(data, clientSocket);
@@ -150,9 +58,9 @@ int DBServer::handleRequest(const SOCKET &clientSocket) {
     }
     case UPDATE_BY_KEY_METHOD_ID: {
 
-        DBServer::receiveString(clientSocket, tableName);
-        DBServer::receiveVector(clientSocket, keys);
-        DBServer::receiveString(clientSocket, value);
+        receiveString(clientSocket, tableName);
+        receiveVector(clientSocket, keys);
+        receiveString(clientSocket, value);
         std::cout << value << std::endl;
         this->database.updateByKeys(tableName, keys, value);
         break;
@@ -162,12 +70,12 @@ int DBServer::handleRequest(const SOCKET &clientSocket) {
         int isSorted = 0;
         std::string key;
 
-
-        DBServer::receiveString(clientSocket, tableName);
-        DBServer::receiveString(clientSocket, key);
+        receiveString(clientSocket, tableName);
+        receiveString(clientSocket, key);
         recv(clientSocket, (char*)&isSorted, sizeof(isSorted), 0);
 
-        this->database.getSortedByKey(tableName, key, isSorted);
+        std::string response = this->database.getSortedByKey(tableName, key, isSorted);
+        sendString(response, clientSocket);
         break;
     }
     default: std::cout << "No method with id " << methodID << std::endl; break;

@@ -1,11 +1,7 @@
-﻿  KVDBApi.cpp
-D:\4-course\c++\KVDataBase\KVDBApi\KVDBApi.cpp(107,71): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-D:\4-course\c++\KVDataBase\KVDBApi\KVDBApi.cpp(119,53): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-     Creating library D:\4-course\c++\KVDataBase\x64\Release\KVDBApi.lib and object D:\4-course\c++\KVDataBase\x64\Release\KVDBApi.exp
+﻿     Creating library D:\4-course\c++\KVDataBase\x64\Release\KVDBApi.lib and object D:\4-course\c++\KVDataBase\x64\Release\KVDBApi.exp
   Generating code
-D:\4-course\c++\KVDataBase\KVDBApi\KVDBApi.cpp(46): warning C4715: 'connectSocket': not all control paths return a value
-  9 of 172 functions ( 5.2%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    12 functions had inline decision re-evaluated but remain unchanged
+  17 of 163 functions (10.4%) were compiled, the rest were copied from previous compilation.
+    3 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   KVDBApi.vcxproj -> D:\4-course\c++\KVDataBase\x64\Release\KVDBApi.dll
