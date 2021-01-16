@@ -90,13 +90,9 @@ vector<string> Database::getByKey(string table_name, string key) {
 void Database::updateByKey(string table_name, string key, string value) {
 	string path = dots + doubleslash + table_name + doubleslash + key;
 	for (auto& p : fs::directory_iterator(path)) {
-		ifstream myfile(p.path().u8string());
-		string line;
-		string all = "";
+		ofstream myfile(p.path().u8string());
 		if (myfile.is_open()) {
-			while (getline(myfile, line)) {
-				all += line;
-			}
+			myfile << value;
 			myfile.close();
 			return;
 		}
@@ -140,6 +136,7 @@ bool Database::createTableWithKeys(string table_name, vector<string> keys) {
 	return false;
 }
 
+// delete metafile too
 bool Database::deleteTable(string table_name) {
 	return fs::remove_all(dots + doubleslash + table_name);
 }
@@ -148,6 +145,7 @@ void Database::addValueByKeys(string table_name, vector<string> keys, string val
 	addValue(table_name, concatKeys(keys), value);
 }
 
+// do not delete folder as we can't add new value
 void Database::deleteAllValuesByKeys(string table_name, vector<string> keys) {
 	deleteAllValuesByKey(table_name, concatKeys(keys));
 }

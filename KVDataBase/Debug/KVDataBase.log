@@ -1,0 +1,2 @@
+﻿  LINK : D:\4-course\c++\KVDataBase\Debug\KVDataBase.exe not found or not built by the last incremental link; performing full link
+LINK : fatal error LNK1104: cannot open file 'D:\4-course\c++\KVDataBase\Debug\KVDataBase.exe'
