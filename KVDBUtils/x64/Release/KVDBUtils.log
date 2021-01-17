@@ -1,4 +1,4 @@
 ﻿  KVDBUtils.cpp
-D:\4-course\c++\KVDataBase\KVDBUtils\KVDBUtils.cpp(101,71): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-D:\4-course\c++\KVDataBase\KVDBUtils\KVDBUtils.cpp(113,45): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\4-course\c++\KVDataBase\KVDBUtils\KVDBUtils.cpp(57,68): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\4-course\c++\KVDataBase\KVDBUtils\KVDBUtils.cpp(69,42): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   KVDBUtils.vcxproj -> D:\4-course\c++\KVDataBase\x64\Release\KVDBUtils.lib

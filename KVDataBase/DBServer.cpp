@@ -1,26 +1,24 @@
 #include "DBServer.h"
 
+
 DBServer::DBServer(int portNumber) {
 
 	this->port = portNumber;
 }
 
 
-
-
 int DBServer::handleRequest(const SOCKET &clientSocket) {
-    
     int methodID = -1;
     recv(clientSocket, (char*)&methodID, sizeof(methodID), 0);
 
-    std::cout << "MethodID = " << methodID << std::endl;
+    std::cout << "Method id: " << methodID << " ";
+
     std::string tableName;
     std::vector<std::string> keys;
-    std::string value = "[[[[[";
-    switch (methodID) {
+    std::string value;
 
+    switch (methodID) {
     case CREATE_TABLE_METHOD_ID: {
-        // create table
         receiveString(clientSocket, tableName);
         receiveVector(clientSocket, keys);
 
@@ -37,8 +35,9 @@ int DBServer::handleRequest(const SOCKET &clientSocket) {
         receiveString(clientSocket, tableName);
         receiveVector(clientSocket, keys);
         receiveString(clientSocket, value);
-        std::cout << value << std::endl;
+        
         this->database.addValueByKeys(tableName, keys, value);
+       
         break;
     }
     case DELETE_ALL_VALUES_BY_KEY_METHOD_ID: {
@@ -53,20 +52,20 @@ int DBServer::handleRequest(const SOCKET &clientSocket) {
         receiveVector(clientSocket, keys);
 
         auto data = this->database.getByKeys(tableName, keys);
+
+        sendInt(KVDB_OK, clientSocket);
         sendVector(data, clientSocket);
         break;
     }
     case UPDATE_BY_KEY_METHOD_ID: {
-
         receiveString(clientSocket, tableName);
         receiveVector(clientSocket, keys);
         receiveString(clientSocket, value);
-        std::cout << value << std::endl;
+
         this->database.updateByKeys(tableName, keys, value);
         break;
     }
     case GET_SORTED_VALUE_METHOD_ID: {
-
         int isSorted = 0;
         std::string key;
 
@@ -74,13 +73,60 @@ int DBServer::handleRequest(const SOCKET &clientSocket) {
         receiveString(clientSocket, key);
         recv(clientSocket, (char*)&isSorted, sizeof(isSorted), 0);
 
-        std::string response = this->database.getSortedByKey(tableName, key, isSorted);
+        auto response = this->database.getSortedByKey(tableName, key, isSorted);
+
+        sendInt(KVDB_OK, clientSocket);
         sendString(response, clientSocket);
+        break;
+    }
+    case GET_FIRST_KEY_METHOD_ID: {
+        receiveString(clientSocket, tableName);
+
+        auto response = this->database.getFirstKey(tableName);
+     
+        sendInt(KVDB_OK, clientSocket);
+        sendVector(response, clientSocket);
+        break;
+    }
+    case GET_LAST_KEY_METHOD_ID: {
+
+        receiveString(clientSocket, tableName);
+
+        auto response = this->database.getLastKey(tableName);
+
+        sendInt(KVDB_OK, clientSocket);
+        sendVector(response, clientSocket);
+        break;
+    }
+    case GET_NEXT_KEY_METHOD_ID: {
+
+        receiveString(clientSocket, tableName);
+        receiveVector(clientSocket, keys);
+
+        auto response = this->database.getNext(tableName, keys);
+
+        sendInt(KVDB_OK, clientSocket);
+        sendVector(response, clientSocket);
+
+        break;
+    }
+    case GET_PREV_KEY_METHOD_ID: {
+
+        receiveString(clientSocket, tableName);
+        receiveVector(clientSocket, keys);
+
+        auto response = this->database.getPrev(tableName, keys);
+
+        sendInt(KVDB_OK, clientSocket);
+        sendVector(response, clientSocket);
+
         break;
     }
     default: std::cout << "No method with id " << methodID << std::endl; break;
     }
 
+    sendInt(KVDB_OK, clientSocket);
+    std::cout << "It's ok\n";
     closesocket(clientSocket);
     return 0;
 }
@@ -139,36 +185,47 @@ int DBServer::startServer() {
     }
 
     
-    SOCKET client_socket;
+    SOCKET clientSocket;
     
     while (listenSocket) {
 
-        client_socket = accept(listen_socket, NULL, NULL);
-        if (client_socket == INVALID_SOCKET) {
+        clientSocket = accept(listen_socket, NULL, NULL);
+        if (clientSocket == INVALID_SOCKET) {
             cerr << "accept failed: " << WSAGetLastError() << "\n"; 
             closesocket(listen_socket);
             WSACleanup();
-           // return 1;
         }
         else {
-            std::cout << "New client:\n";
-            handleRequest(client_socket);
-            /*std::thread *newClient = new std::thread(DBServer::handleRequest, client_socket);
-            newClient->join();
-            
-            threads.push_back(newClient);*/
+            try {
+                handleRequest(clientSocket);
+            }
+            catch (InvalidKeySizeException ikse) {
+                std::cout << "InvalidKeySizeException" << std::endl;
+                sendInt(KVDB_INVALID_KEY_SIZE, clientSocket);
+            }
+            catch (ThereIsNoSuchKeyException nske) {
+                std::cout << "ThereIsNoSuchKeyException" << std::endl;
+                sendInt(KVDB_NO_SUCH_KEY, clientSocket);
+            }
+            catch (ThereIsNoSuchTableException nste) {
+                std::cout << "ThereIsNoSuchTableException" << std::endl;
+                sendInt(KVDB_TABLE_DOESNT_EXISTS, clientSocket);
+            }
+            catch (TableAlreadyExistsException taee) {
+                std::cout << "TableAlreadyExistsException" << std::endl;
+                sendInt(KVDB_TABLE_ALREADY_EXISTS, clientSocket);
+            }
+            catch (...) {
+                std::cout << "other exceptions" << std::endl;
+                sendInt(KVDB_UNDEFINED_ERROR, clientSocket);
+            }
         }
 
-        
-        //Sleep(50);
     }
-
-   
-   // client_socket = accept(listen_socket, NULL, NULL);
-    //handleRequest(client_socket); // multiclient app
 
     return 0;
 }
+
 
 int DBServer::closeServer() {
    

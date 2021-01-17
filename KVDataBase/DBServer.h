@@ -3,11 +3,11 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <thread>
+
 
 #include "KVDBUtils.h"
 #include "KVDataBase.h"
-
+#include "KVDBError.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -22,7 +22,6 @@ class DBServer
 	WSADATA wsaData;
 	struct addrinfo* addr = NULL;
 
-	std::vector<std::thread*> threads;
 	bool listenSocket = true;
 
 	int handleRequest(const SOCKET& clientSocket);

@@ -7,6 +7,7 @@
 #endif
 
 #include "KVDBUtils.h"
+#include "KVDBError.h"
 
 #include <string>
 #include <vector>
@@ -27,4 +28,10 @@ namespace kvdb {
 
 	extern "C" KVDB_API int getFirstValue(std::string tableName, const std::string & key, std::string & output);
 	extern "C" KVDB_API int getLastValue(std::string tableName, const std::string & key, std::string & output);
+
+	extern "C" KVDB_API int getFirstKey(std::string tableName, std::vector<std::string> &keys);
+	extern "C" KVDB_API int getLastKey(std::string	tableName, std::vector<std::string> &keys);
+
+	extern "C" KVDB_API int getNextKey(std::string tableName, const std::vector<std::string> & currentKeys, std::vector<std::string> & outputKeys);
+	extern "C" KVDB_API int getPrevKey(std::string tableName, const std::vector<std::string> & currentKeys, std::vector<std::string> & outputKeys);
 }

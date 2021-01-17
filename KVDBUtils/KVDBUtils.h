@@ -12,16 +12,20 @@
 #define GET_BY_KEY_METHOD_ID 6
 #define UPDATE_BY_KEY_METHOD_ID 7
 #define GET_SORTED_VALUE_METHOD_ID 8
+#define GET_FIRST_KEY_METHOD_ID 9
+#define GET_LAST_KEY_METHOD_ID 10
+#define GET_NEXT_KEY_METHOD_ID 11
+#define GET_PREV_KEY_METHOD_ID 12
 
 
 int connectSocket(std::string ipAddress, int port, SOCKET& sock);
 
-int receiveString(const SOCKET& clientSocket, std::string& output);
+int receiveString(const SOCKET& sock, std::string& output);
 
-int receiveVector(const SOCKET& clientSocket, std::vector<std::string>& output);
+int receiveVector(const SOCKET& sock, std::vector<std::string>& output);
 
-int sendInt(int value, const SOCKET& socket_);
+int sendInt(int value, const SOCKET& sock);
 
-int sendString(std::string message, const SOCKET& socket_);
+int sendString(std::string message, const SOCKET& sock);
 
-int sendVector(const std::vector<std::string>& vector, const SOCKET& socket_);
+int sendVector(const std::vector<std::string>& vector, const SOCKET& sock);

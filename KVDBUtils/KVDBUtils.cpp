@@ -6,6 +6,7 @@
 
 #include "KVDBUtils.h"
 
+
 const int max_client_buffer_size = 1024;
 
 
@@ -41,11 +42,60 @@ int connectSocket(std::string ipAddress, int port, SOCKET& sock) {
 }
 
 
-int receiveString(const SOCKET& clientSocket, std::string& output) {
+int sendInt(int value, const SOCKET& sock) {
+
+	int sendResult = send(sock, (char*)&value, sizeof(value), 0);
+	return sendResult;
+}
+
+
+int sendString(std::string message, const SOCKET& sock) {
+
+	int recvResult = 0;
+
+	recv(sock, (char*)&recvResult, sizeof(int), 0);
+	int sendResult = send(sock, message.c_str(), message.size() + 1, 0);
+
+	return sendResult;
+}
+
+
+int sendVector(const std::vector<std::string>& vector, const SOCKET& sock) {
+
+	int sendResult;
+	int recvResult = 0;
+
+	recv(sock, (char*)&recvResult, sizeof(int), 0);
+	sendResult = sendInt(vector.size(), sock);
+
+	if (sendResult <= 0) {
+		return -1;
+	}
+
+
+	for (std::string message : vector) {
+
+		recv(sock, (char*)&recvResult, sizeof(int), 0);
+		sendString(message, sock);
+
+		if (sendResult <= 0) {
+			return -1;
+		}
+	}
+
+	return 0;
+}
+	
+
+
+int receiveString(const SOCKET& sock, std::string& output) {
+
+	int ok = 0;
+	send(sock, (char*)&ok, sizeof(int), 0);
 
 	char buf[max_client_buffer_size];
 
-	int result = recv(clientSocket, buf, max_client_buffer_size, 0);
+	int result = recv(sock, buf, max_client_buffer_size, 0);
 
 	if (result == SOCKET_ERROR) {
 		return 1;
@@ -65,13 +115,13 @@ int receiveString(const SOCKET& clientSocket, std::string& output) {
 
 
 
-int receiveVector(const SOCKET& clientSocket, std::vector<std::string>& output) {
+int receiveVector(const SOCKET& sock, std::vector<std::string>& output) {
 
 	int ok = 0;
-	send(clientSocket, (char*)&ok, sizeof(int), 0);
+	send(sock, (char*)&ok, sizeof(int), 0);
 
 	int vectorSize = 0;
-	recv(clientSocket, (char*)&vectorSize, sizeof(vectorSize), 0);
+	recv(sock, (char*)&vectorSize, sizeof(vectorSize), 0);
 	output = std::vector<std::string>();
 
 	int receiveResult = 0;
@@ -79,9 +129,9 @@ int receiveVector(const SOCKET& clientSocket, std::vector<std::string>& output) 
 	std::string message;
 	for (int i = 0; i < vectorSize; i++) {
 
-		send(clientSocket, (char*)&ok, sizeof(int), 0);
+		send(sock, (char*)&ok, sizeof(int), 0);
 
-		receiveResult = receiveString(clientSocket, message);
+		receiveResult = receiveString(sock, message);
 
 		output.push_back(message);
 	}
@@ -90,42 +140,3 @@ int receiveVector(const SOCKET& clientSocket, std::vector<std::string>& output) 
 }
 
 
-int sendInt(int value, const SOCKET& socket_) {
-
-	int sendResult = send(socket_, (char*)&value, sizeof(value), 0);
-	return sendResult;
-}
-
-int sendString(std::string message, const SOCKET& socket_) {
-
-	int sendResult = send(socket_, message.c_str(), message.size() + 1, 0);
-
-	return sendResult;
-}
-
-
-int sendVector(const std::vector<std::string>& vector, const SOCKET& socket_) {
-
-	int sendResult;
-	int recvResult = 0;
-
-	recv(socket_, (char*)&recvResult, sizeof(int), 0);
-	sendResult = sendInt(vector.size(), socket_);
-
-	if (sendResult <= 0) {
-		return -1;
-	}
-
-
-	for (std::string message : vector) {
-
-		recv(socket_, (char*)&recvResult, sizeof(int), 0);
-		sendString(message, socket_);
-
-		if (sendResult <= 0) {
-			return -1;
-		}
-	}
-
-	return 0;
-}
