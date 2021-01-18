@@ -3,7 +3,7 @@
 
 int main()
 {
-	DBServer server(8000);
+	DBServer server(8000, "../../dbtest");
 
 	server.startServer();
 	server.closeServer();

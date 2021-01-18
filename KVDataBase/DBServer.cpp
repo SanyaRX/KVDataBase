@@ -1,9 +1,11 @@
 #include "DBServer.h"
 
 
-DBServer::DBServer(int portNumber) {
+DBServer::DBServer(int portNumber) : port(portNumber) {}
 
-	this->port = portNumber;
+DBServer::DBServer(int portNumber, std::string storagePath) : port(portNumber) {
+
+    this->database = Database(storagePath);
 }
 
 

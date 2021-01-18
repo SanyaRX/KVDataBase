@@ -15,7 +15,7 @@ using std::cerr;
 
 class DBServer
 {
-	Database database = Database("../../dbtest");
+	Database database;
 
 	int port = 8080;
 	
@@ -29,6 +29,7 @@ public:
 
 	DBServer() {};
 	DBServer(int portNumber);
+	DBServer(int portNumber, std::string storagePath);
 
 	int startServer();
 	int closeServer();
