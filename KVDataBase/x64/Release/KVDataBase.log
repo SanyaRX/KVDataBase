@@ -1,9 +1,0 @@
-﻿  DBServer.cpp
-D:\4-course\c++\KVDataBase\KVDataBase\DBServer.cpp(160,23): warning C4244: 'initializing': conversion from 'SOCKET' to 'int', possible loss of data
-  Server.cpp
-  Generating code
-  8 of 720 functions ( 1.1%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    68 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  KVDataBase.vcxproj -> D:\4-course\c++\KVDataBase\x64\Release\KVDataBase.exe

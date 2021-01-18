@@ -35,3 +35,7 @@
 *.vs
 
 dbtest
+
+**Release/
+**Debug/
+**x64
