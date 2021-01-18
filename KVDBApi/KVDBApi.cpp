@@ -43,7 +43,7 @@ void kvdb::KVDBApi::checkResponse(const SOCKET& sock) {
 }
 
 
-void kvdb::KVDBApi::createTable(std::string tableName, const std::vector<std::string>& keys) {
+void kvdb::KVDBApi::createTable(const std::string& tableName, const std::vector<std::string>& keys) {
 
 	SOCKET sock;
 	
@@ -61,7 +61,7 @@ void kvdb::KVDBApi::createTable(std::string tableName, const std::vector<std::st
 }
 
 
-void kvdb::KVDBApi::deleteTable(std::string tableName) {
+void kvdb::KVDBApi::deleteTable(const std::string& tableName) {
 
 	SOCKET sock;
 	connectSocket(ipAddress, port, sock);
@@ -77,7 +77,7 @@ void kvdb::KVDBApi::deleteTable(std::string tableName) {
 }
 
 
-void kvdb::KVDBApi::addValue(std::string tableName, const std::vector<std::string>& keys, const std::string& value) {
+void kvdb::KVDBApi::addValue(const std::string& tableName, const std::vector<std::string>& keys, const std::string& value) {
 
 	SOCKET sock;
 	connectSocket(ipAddress, port, sock);
@@ -96,7 +96,7 @@ void kvdb::KVDBApi::addValue(std::string tableName, const std::vector<std::strin
 }
 
 
-void kvdb::KVDBApi::deleteAllValuesByKey(std::string tableName, const std::vector<std::string>& keys) {
+void kvdb::KVDBApi::deleteAllValuesByKey(const std::string& tableName, const std::vector<std::string>& keys) {
 
 	SOCKET sock;
 	connectSocket(ipAddress, port, sock);
@@ -112,7 +112,7 @@ void kvdb::KVDBApi::deleteAllValuesByKey(std::string tableName, const std::vecto
 }
 
 
-void kvdb::KVDBApi::deleteValueByKey(std::string tableName, const std::vector<std::string> & keys) {
+void kvdb::KVDBApi::deleteValueByKey(const std::string& tableName, const std::vector<std::string> & keys) {
 
 	SOCKET sock;
 	connectSocket(ipAddress, port, sock);
@@ -128,7 +128,7 @@ void kvdb::KVDBApi::deleteValueByKey(std::string tableName, const std::vector<st
 }
 
 
-std::vector<std::string> kvdb::KVDBApi::getByKey(std::string tableName, const std::vector<std::string>& keys) {
+std::vector<std::string> kvdb::KVDBApi::getByKey(const std::string& tableName, const std::vector<std::string>& keys) {
 
 	SOCKET sock;
 	std::vector<std::string> output;
@@ -152,7 +152,7 @@ std::vector<std::string> kvdb::KVDBApi::getByKey(std::string tableName, const st
 }
 
 
-void kvdb::KVDBApi::updateByKey(std::string tableName, const std::vector<std::string> & keys, const std::string& value) {
+void kvdb::KVDBApi::updateByKey(const std::string& tableName, const std::vector<std::string> & keys, const std::string& value) {
 
 	SOCKET sock;
 	connectSocket(ipAddress, port, sock);
@@ -169,7 +169,7 @@ void kvdb::KVDBApi::updateByKey(std::string tableName, const std::vector<std::st
 }
 
 
-std::string kvdb::KVDBApi::getFirstValueSorted(std::string tableName, const std::string &key, bool isSorted) {
+std::string kvdb::KVDBApi::getFirstValueSorted(const std::string& tableName, const std::string &key, bool isSorted) {
 
 	SOCKET sock;
 	std::string output;
@@ -194,19 +194,19 @@ std::string kvdb::KVDBApi::getFirstValueSorted(std::string tableName, const std:
 }
 
 
-std::string kvdb::KVDBApi::getFirstValue(std::string tableName, const std::string &key) {
+std::string kvdb::KVDBApi::getFirstValue(const std::string& tableName, const std::string &key) {
 
 	return getFirstValueSorted(tableName, key, false);
 }
 
 
-std::string kvdb::KVDBApi::getLastValue(std::string tableName, const std::string & key) {
+std::string kvdb::KVDBApi::getLastValue(const std::string& tableName, const std::string & key) {
 
 	return getFirstValueSorted(tableName, key, true);
 }
 
 
-std::vector<std::string> kvdb::KVDBApi::getFirstKey(std::string tableName) {
+std::vector<std::string> kvdb::KVDBApi::getFirstKey(const std::string& tableName) {
 	SOCKET sock;
 	std::vector<std::string> key;
 	
@@ -228,7 +228,7 @@ std::vector<std::string> kvdb::KVDBApi::getFirstKey(std::string tableName) {
 }
 
 
-std::vector<std::string> kvdb::KVDBApi::getLastKey(std::string tableName) {
+std::vector<std::string> kvdb::KVDBApi::getLastKey(const std::string& tableName) {
 	SOCKET sock;
 	std::vector<std::string> keys;
 
@@ -250,7 +250,7 @@ std::vector<std::string> kvdb::KVDBApi::getLastKey(std::string tableName) {
 }
 
 
-std::vector<std::string> kvdb::KVDBApi::getNextKey(std::string tableName, const std::vector<std::string> & currentKeys) {
+std::vector<std::string> kvdb::KVDBApi::getNextKey(const std::string& tableName, const std::vector<std::string> & currentKeys) {
 	SOCKET sock;
 	std::vector<std::string> outputKey;
 
@@ -273,7 +273,7 @@ std::vector<std::string> kvdb::KVDBApi::getNextKey(std::string tableName, const 
 }
 
 
-std::vector<std::string> kvdb::KVDBApi::getPrevKey(std::string tableName, const std::vector<std::string> & currentKeys) {
+std::vector<std::string> kvdb::KVDBApi::getPrevKey(const std::string& tableName, const std::vector<std::string> & currentKeys) {
 	SOCKET sock;
 	std::vector<std::string> outputKey;
 
