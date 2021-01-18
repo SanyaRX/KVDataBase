@@ -1,11 +1,5 @@
 #pragma once
 
-#ifdef KVDBAPI_EXPORTS
-#define KVDB_API __declspec(dllexport)
-#else
-#define KVDB_API __declspec(dllimport)
-#endif
-
 #include "KVDBUtils.h"
 #include "KVDBError.h"
 
