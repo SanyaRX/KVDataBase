@@ -1,4 +1,11 @@
 ﻿  0 File(s) copied
   test.cpp
-D:\4-course\c++\KVDataBase\KVDBTest\test.cpp(22,59): warning C4101: 'ex': unreferenced local variable
+D:\4-course\c++\KVDataBase\KVDBTest\test.cpp(30,60): warning C4101: 'taee': unreferenced local variable
+D:\4-course\c++\KVDataBase\KVDBTest\test.cpp(82,50): warning C4101: 'nske': unreferenced local variable
+D:\4-course\c++\KVDataBase\KVDBTest\test.cpp(97,60): warning C4101: 'tdne': unreferenced local variable
+D:\4-course\c++\KVDataBase\KVDBTest\test.cpp(113,56): warning C4101: 'ikse': unreferenced local variable
+  KVDBAPI.lib(KVDBApi.obj) : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
+  Generating code
+D:\4-course\c++\KVDataBase\KVDBUtils\KVDBUtils.cpp(42): warning C4715: 'connectSocket': not all control paths return a value
+  Finished generating code
   KVDBTest.vcxproj -> D:\4-course\c++\KVDataBase\x64\Release\KVDBTest.exe

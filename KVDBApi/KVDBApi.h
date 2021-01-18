@@ -14,24 +14,34 @@
 
 namespace kvdb {
 
-	extern "C" KVDB_API int openDataBase(std::string ipAddress, int port);
+	class KVDBApi {
 
-	extern "C" KVDB_API int createTable(std::string tableName, const std::vector<std::string> &keys);
-	extern "C" KVDB_API int deleteTable(std::string tableName);
+		std::string ipAddress = "127.0.0.1";
+		int port = 8080;
 
-	extern "C" KVDB_API int addValue(std::string tableName, const std::vector<std::string>& keys, std::string value);
-	extern "C" KVDB_API int deleteAllValuesByKey(std::string tableName, const std::vector<std::string> &keys);
-	extern "C" KVDB_API int deleteValueByKey(std::string tableName, const std::vector<std::string> &keys);
+		std::string getFirstValueSorted(std::string tableName, const std::string& key, bool isSorted);
+		void checkResponse(const SOCKET& sock);
+	public:
+		KVDBApi() {};
+		KVDBApi(std::string ipAddress, int port) : ipAddress(ipAddress), port(port) {};
 
-	extern "C" KVDB_API int getByKey(std::string tableName, const std::vector<std::string> &keys, std::vector<std::string> &output);
-	extern "C" KVDB_API int updateByKey(std::string tableName, const std::vector<std::string> &keys, std::string value);
+		void createTable(std::string tableName, const std::vector<std::string>& keys);
+		void deleteTable(std::string tableName);
 
-	extern "C" KVDB_API int getFirstValue(std::string tableName, const std::string & key, std::string & output);
-	extern "C" KVDB_API int getLastValue(std::string tableName, const std::string & key, std::string & output);
+		void addValue(std::string tableName, const std::vector<std::string>& keys, const std::string& value);
+		void deleteAllValuesByKey(std::string tableName, const std::vector<std::string>& keys);
+		void deleteValueByKey(std::string tableName, const std::vector<std::string>& keys);
 
-	extern "C" KVDB_API int getFirstKey(std::string tableName, std::vector<std::string> &keys);
-	extern "C" KVDB_API int getLastKey(std::string	tableName, std::vector<std::string> &keys);
+		std::vector<std::string> getByKey(std::string tableName, const std::vector<std::string>& keys);
+		void updateByKey(std::string tableName, const std::vector<std::string>& keys, const std::string& value);
 
-	extern "C" KVDB_API int getNextKey(std::string tableName, const std::vector<std::string> & currentKeys, std::vector<std::string> & outputKeys);
-	extern "C" KVDB_API int getPrevKey(std::string tableName, const std::vector<std::string> & currentKeys, std::vector<std::string> & outputKeys);
+		std::string getFirstValue(std::string tableName, const std::string& key);
+		std::string getLastValue(std::string tableName, const std::string& key);
+
+		std::vector<std::string> getFirstKey(std::string tableName);
+		std::vector<std::string> getLastKey(std::string	tableName);
+
+		std::vector<std::string> getNextKey(std::string tableName, const std::vector<std::string>& currentKeys);
+		std::vector<std::string> getPrevKey(std::string tableName, const std::vector<std::string>& currentKeys);
+	};
 }

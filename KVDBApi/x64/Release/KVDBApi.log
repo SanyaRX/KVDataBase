@@ -1,8 +1,2 @@
 ﻿  KVDBApi.cpp
-     Creating library D:\4-course\c++\KVDataBase\x64\Release\KVDBApi.lib and object D:\4-course\c++\KVDataBase\x64\Release\KVDBApi.exp
-  Generating code
-  34 of 203 functions (16.7%) were compiled, the rest were copied from previous compilation.
-    5 functions were new in current compilation
-    6 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  KVDBApi.vcxproj -> D:\4-course\c++\KVDataBase\x64\Release\KVDBApi.dll
+  KVDBApi.vcxproj -> D:\4-course\c++\KVDataBase\x64\Release\KVDBApi.lib

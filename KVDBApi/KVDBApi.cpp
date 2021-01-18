@@ -5,15 +5,10 @@
 #include <WS2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
 
-static std::string ipAddress_;
-static int port_;
-
-
-void checkResponse(const SOCKET& sock) {
+void kvdb::KVDBApi::checkResponse(const SOCKET& sock) {
 
 	int serverResponse = -1;
 	recv(sock, (char*)&serverResponse, sizeof(serverResponse), 0);
-	std::cout << "Server response: " << serverResponse << std::endl;
 
 	switch (serverResponse) {
 	case KVDB_OK: break;
@@ -48,20 +43,11 @@ void checkResponse(const SOCKET& sock) {
 }
 
 
-int kvdb::openDataBase(std::string ipAddress, int port) {
-
-	ipAddress_ = ipAddress;
-	port_ = port;
-
-	return 0;
-}
-
-
-int kvdb::createTable(std::string tableName, const std::vector<std::string>& keys) {
+void kvdb::KVDBApi::createTable(std::string tableName, const std::vector<std::string>& keys) {
 
 	SOCKET sock;
 	
-	connectSocket(ipAddress_, port_, sock);
+	connectSocket(ipAddress, port, sock);
 
 	sendInt(CREATE_TABLE_METHOD_ID, sock);
 	sendString(tableName, sock);
@@ -72,14 +58,13 @@ int kvdb::createTable(std::string tableName, const std::vector<std::string>& key
 	closesocket(sock);
 	WSACleanup();
 
-	return 0;
 }
 
 
-int kvdb::deleteTable(std::string tableName) {
+void kvdb::KVDBApi::deleteTable(std::string tableName) {
 
 	SOCKET sock;
-	connectSocket(ipAddress_, port_, sock);
+	connectSocket(ipAddress, port, sock);
 
 	sendInt(DELETE_TABLE_METHOD_ID, sock);
 	sendString(tableName, sock);
@@ -89,14 +74,13 @@ int kvdb::deleteTable(std::string tableName) {
 	closesocket(sock);
 	WSACleanup();
 
-	return 0;
 }
 
 
-int kvdb::addValue(std::string tableName, const std::vector<std::string>& keys, std::string value) {
+void kvdb::KVDBApi::addValue(std::string tableName, const std::vector<std::string>& keys, const std::string& value) {
 
 	SOCKET sock;
-	connectSocket(ipAddress_, port_, sock);
+	connectSocket(ipAddress, port, sock);
 
 	sendInt(ADD_VALUE_METHOD_ID, sock);
 
@@ -109,14 +93,13 @@ int kvdb::addValue(std::string tableName, const std::vector<std::string>& keys, 
 	closesocket(sock);
 	WSACleanup();
 
-	return 0;
 }
 
 
-int kvdb::deleteAllValuesByKey(std::string tableName, const std::vector<std::string>& keys) {
+void kvdb::KVDBApi::deleteAllValuesByKey(std::string tableName, const std::vector<std::string>& keys) {
 
 	SOCKET sock;
-	connectSocket(ipAddress_, port_, sock);
+	connectSocket(ipAddress, port, sock);
 
 	sendInt(DELETE_ALL_VALUES_BY_KEY_METHOD_ID, sock);
 	sendString(tableName, sock);
@@ -126,15 +109,13 @@ int kvdb::deleteAllValuesByKey(std::string tableName, const std::vector<std::str
 
 	closesocket(sock);
 	WSACleanup();
-
-	return 0;
 }
 
 
-int kvdb::deleteValueByKey(std::string tableName, const std::vector<std::string> & keys) {
+void kvdb::KVDBApi::deleteValueByKey(std::string tableName, const std::vector<std::string> & keys) {
 
 	SOCKET sock;
-	connectSocket(ipAddress_, port_, sock);
+	connectSocket(ipAddress, port, sock);
 
 	sendInt(DELETE_VALUE_BY_KEY_METHOD_ID, sock);
 	sendString(tableName, sock);
@@ -144,15 +125,15 @@ int kvdb::deleteValueByKey(std::string tableName, const std::vector<std::string>
 
 	closesocket(sock);
 	WSACleanup();
-
-	return 0;
 }
 
 
-int kvdb::getByKey(std::string tableName, const std::vector<std::string> & keys, std::vector<std::string> & output) {
+std::vector<std::string> kvdb::KVDBApi::getByKey(std::string tableName, const std::vector<std::string>& keys) {
 
 	SOCKET sock;
-	connectSocket(ipAddress_, port_, sock);
+	std::vector<std::string> output;
+
+	connectSocket(ipAddress, port, sock);
 
 	sendInt(GET_BY_KEY_METHOD_ID, sock);
 	sendString(tableName, sock);
@@ -167,14 +148,14 @@ int kvdb::getByKey(std::string tableName, const std::vector<std::string> & keys,
 	closesocket(sock);
 	WSACleanup();
 
-	return 0;
+	return output;
 }
 
 
-int kvdb::updateByKey(std::string tableName, const std::vector<std::string> & keys, std::string value) {
+void kvdb::KVDBApi::updateByKey(std::string tableName, const std::vector<std::string> & keys, const std::string& value) {
 
 	SOCKET sock;
-	connectSocket(ipAddress_, port_, sock);
+	connectSocket(ipAddress, port, sock);
 
 	sendInt(UPDATE_BY_KEY_METHOD_ID, sock);
 	sendString(tableName, sock);
@@ -185,15 +166,15 @@ int kvdb::updateByKey(std::string tableName, const std::vector<std::string> & ke
 
 	closesocket(sock);
 	WSACleanup();
-
-	return 0;
 }
 
 
-int getFirstValueSorted(std::string tableName, const std::string &key, bool isSorted, std::string &output) {
+std::string kvdb::KVDBApi::getFirstValueSorted(std::string tableName, const std::string &key, bool isSorted) {
 
 	SOCKET sock;
-	connectSocket(ipAddress_, port_, sock);
+	std::string output;
+	
+	connectSocket(ipAddress, port, sock);
 
 	sendInt(GET_SORTED_VALUE_METHOD_ID, sock);
 	sendString(tableName, sock);
@@ -209,49 +190,49 @@ int getFirstValueSorted(std::string tableName, const std::string &key, bool isSo
 	closesocket(sock);
 	WSACleanup();
 
-	return 0;
+	return output;
 }
 
 
-int kvdb::getFirstValue(std::string tableName, const std::string &key, std::string& output) {
+std::string kvdb::KVDBApi::getFirstValue(std::string tableName, const std::string &key) {
 
-	getFirstValueSorted(tableName, key, false, output);
-
-	return 0;
+	return getFirstValueSorted(tableName, key, false);
 }
 
 
-int kvdb::getLastValue(std::string tableName, const std::string & key, std::string& output) {
+std::string kvdb::KVDBApi::getLastValue(std::string tableName, const std::string & key) {
 
-	getFirstValueSorted(tableName, key, true, output);
-
-	return 0;
+	return getFirstValueSorted(tableName, key, true);
 }
 
 
-int kvdb::getFirstKey(std::string tableName, std::vector<std::string>& keys) {
+std::vector<std::string> kvdb::KVDBApi::getFirstKey(std::string tableName) {
 	SOCKET sock;
-	connectSocket(ipAddress_, port_, sock);
+	std::vector<std::string> key;
+	
+	connectSocket(ipAddress, port, sock);
 
 	sendInt(GET_FIRST_KEY_METHOD_ID, sock);
 	sendString(tableName, sock);
 
 	checkResponse(sock);
 
-	receiveVector(sock, keys);
+	receiveVector(sock, key);
 
 	checkResponse(sock);
 
 	closesocket(sock);
 	WSACleanup();
 
-	return 0;
+	return key;
 }
 
 
-int kvdb::getLastKey(std::string	tableName, std::vector<std::string> & keys) {
+std::vector<std::string> kvdb::KVDBApi::getLastKey(std::string tableName) {
 	SOCKET sock;
-	connectSocket(ipAddress_, port_, sock);
+	std::vector<std::string> keys;
+
+	connectSocket(ipAddress, port, sock);
 
 	sendInt(GET_LAST_KEY_METHOD_ID, sock);
 	sendString(tableName, sock);
@@ -265,13 +246,15 @@ int kvdb::getLastKey(std::string	tableName, std::vector<std::string> & keys) {
 	closesocket(sock);
 	WSACleanup();
 
-	return 0;
+	return keys;
 }
 
 
-int kvdb::getNextKey(std::string tableName, const std::vector<std::string> & currentKeys, std::vector<std::string> & outputKeys) {
+std::vector<std::string> kvdb::KVDBApi::getNextKey(std::string tableName, const std::vector<std::string> & currentKeys) {
 	SOCKET sock;
-	connectSocket(ipAddress_, port_, sock);
+	std::vector<std::string> outputKey;
+
+	connectSocket(ipAddress, port, sock);
 
 	sendInt(GET_NEXT_KEY_METHOD_ID, sock);
 	sendString(tableName, sock);
@@ -279,20 +262,22 @@ int kvdb::getNextKey(std::string tableName, const std::vector<std::string> & cur
 
 	checkResponse(sock);
 
-	receiveVector(sock, outputKeys);
+	receiveVector(sock, outputKey);
 
 	checkResponse(sock);
 
 	closesocket(sock);
 	WSACleanup();
 
-	return 0;
+	return outputKey;
 }
 
 
-int kvdb::getPrevKey(std::string tableName, const std::vector<std::string> & currentKeys, std::vector<std::string> & outputKeys) {
+std::vector<std::string> kvdb::KVDBApi::getPrevKey(std::string tableName, const std::vector<std::string> & currentKeys) {
 	SOCKET sock;
-	connectSocket(ipAddress_, port_, sock);
+	std::vector<std::string> outputKey;
+
+	connectSocket(ipAddress, port, sock);
 
 	sendInt(GET_PREV_KEY_METHOD_ID, sock);
 	sendString(tableName, sock);
@@ -300,12 +285,12 @@ int kvdb::getPrevKey(std::string tableName, const std::vector<std::string> & cur
 
 	checkResponse(sock);
 
-	receiveVector(sock, outputKeys);
+	receiveVector(sock, outputKey);
 
 	checkResponse(sock);
 
 	closesocket(sock);
 	WSACleanup();
 
-	return 0;
+	return outputKey;
 }
