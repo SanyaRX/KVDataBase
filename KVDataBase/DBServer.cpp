@@ -157,29 +157,29 @@ int DBServer::startServer() {
         return 1;
     }
 
-    int listen_socket = socket(addr->ai_family, addr->ai_socktype,
+    int listenSock = socket(addr->ai_family, addr->ai_socktype,
         addr->ai_protocol);
     
-    if (listen_socket == INVALID_SOCKET) {
+    if (listenSock == INVALID_SOCKET) {
         cerr << "Error at socket: " << WSAGetLastError() << "\n";
         freeaddrinfo(addr);
         WSACleanup();
         return 1;
     }
 
-    result = bind(listen_socket, addr->ai_addr, (int)addr->ai_addrlen);
+    result = bind(listenSock, addr->ai_addr, (int)addr->ai_addrlen);
 
     if (result == SOCKET_ERROR) {
         cerr << "bind failed with error: " << WSAGetLastError() << "\n";
         freeaddrinfo(addr);
-        closesocket(listen_socket);
+        closesocket(listenSock);
         WSACleanup();
         return 1;
     }
 
-    if (listen(listen_socket, SOMAXCONN) == SOCKET_ERROR) {
+    if (listen(listenSock, SOMAXCONN) == SOCKET_ERROR) {
         cerr << "listen failed with error: " << WSAGetLastError() << "\n";
-        closesocket(listen_socket);
+        closesocket(listenSock);
         WSACleanup();
         return 1;
     }
@@ -189,10 +189,10 @@ int DBServer::startServer() {
     
     while (listenSocket) {
 
-        clientSocket = accept(listen_socket, NULL, NULL);
+        clientSocket = accept(listenSock, NULL, NULL);
         if (clientSocket == INVALID_SOCKET) {
             cerr << "accept failed: " << WSAGetLastError() << "\n"; 
-            closesocket(listen_socket);
+            closesocket(listenSock);
             WSACleanup();
         }
         else {
